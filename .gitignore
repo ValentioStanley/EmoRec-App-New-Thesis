@@ -1,2 +1,4 @@
 env/*
 preprocess/indobertweet-base-uncased-model/model.safetensors
+env
+__pycache__
