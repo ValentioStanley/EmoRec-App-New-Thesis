@@ -20,10 +20,12 @@ os.environ['TF_ENABLE_ONEDNN_OPTS'] = '0'
 
 import torch
 from transformers import AutoTokenizer, AutoModelForSequenceClassification
-path = r"preprocess\indobertweet-base-uncased-model"
-tokenizer = AutoTokenizer.from_pretrained(path, local_files_only=True)# load tokenizer
+# path = r"preprocess\indobertweet-base-uncased-model"
+path_save_model = r"model\deep_learning\save_model"
+path_save_pretrained = r"model\deep_learning\save_pretrained"
+tokenizer = AutoTokenizer.from_pretrained(path_save_pretrained, local_files_only=True)# load tokenizer
 # D:\Projects\Product-Review-Data-Mining-App-Thesis\preprocess\indobertweet-base-uncased-model
-model = AutoModelForSequenceClassification.from_pretrained(path, local_files_only=True)
+model = AutoModelForSequenceClassification.from_pretrained(path_save_pretrained, local_files_only=True)
 @app.route('/api/result', methods=['POST'])
 def result():    
     
@@ -38,13 +40,23 @@ def result():
 
     # Get the predicted class
     emotion = torch.argmax(outputs.logits, dim=-1).item()
-    if emotion == 0 : emosiLabel = 'Marah'
-    elif emotion == 1 : emosiLabel = 'Takut'
-    elif emotion == 4 : emosiLabel = 'Kecewa'
-    elif emotion == 2 : emosiLabel = 'Senang'
-    elif emotion == 3 : emosiLabel = 'Suka'
+    if emotion == 0 : 
+        emosiLabel = 'Marah' 
+        emotion = 'Anger'
+    elif emotion == 1 : 
+        emosiLabel = 'Takut'
+        emotion = 'Fear'
+    elif emotion == 4 : 
+        emosiLabel = 'Kecewa'
+        emotion = 'Sadness'
+    elif emotion == 2 : 
+        emosiLabel = 'Senang'
+        emotion = 'Happy'
+    elif emotion == 3 : 
+        emosiLabel = 'Suka'
+        emotion = 'Love'
     # print(f"Predicted class: {predictions.item()}")
-    return rt('main.html', emotion=str(emosiLabel), emosi=emosiLabel, input=review)
+    return rt('main.html', emotion=emotion, emosi=emosiLabel, input=review)
 
 # MACHINE LEARNING
 import pickle
@@ -89,6 +101,6 @@ if __name__ == '__main__':
     # app.run(debug = True, host= '192.168.8.100')
     # run() method of Flask class runs the application 
     # on the local development server.
-    app.run(debug = True)
+    app.run(host="0.0.0.0", port=5000, debug = True)
     
 
