@@ -1,4 +1,4 @@
-from flask import Flask, render_template as rt, request
+from flask import Flask, render_template as rt, request, url_for
 # from model.Implementation_Testing import process_cleaning
 
 # Flask constructor takes the name of 
@@ -15,8 +15,8 @@ def index():
     return rt('main.html')
 
 # DEEP LEARNING
-import os
-os.environ['TF_ENABLE_ONEDNN_OPTS'] = '0'
+# import os
+# os.environ['TF_ENABLE_ONEDNN_OPTS'] = '0'
 
 import torch
 from transformers import AutoTokenizer, AutoModelForSequenceClassification
@@ -43,20 +43,25 @@ def result():
     if emotion == 0 : 
         emosiLabel = 'Marah' 
         emotion = 'Anger'
+        path_img = url_for('static', filename='image/Anger.png')
     elif emotion == 1 : 
         emosiLabel = 'Takut'
         emotion = 'Fear'
+        path_img = url_for('static', filename='image/Fear.png')
     elif emotion == 4 : 
         emosiLabel = 'Kecewa'
         emotion = 'Sadness'
+        path_img = url_for('static', filename='image/Sadness.png')
     elif emotion == 2 : 
         emosiLabel = 'Senang'
         emotion = 'Happy'
+        path_img = url_for('static', filename='image/Happy.png')
     elif emotion == 3 : 
         emosiLabel = 'Suka'
         emotion = 'Love'
+        path_img = url_for('static', filename='image/Love.png')
     # print(f"Predicted class: {predictions.item()}")
-    return rt('main.html', emotion=emotion, emosi=emosiLabel, input=review)
+    return rt('main.html', emotion=emotion, emosi=emosiLabel, img_emotion=path_img, input=review)
 
 # MACHINE LEARNING
 import pickle
