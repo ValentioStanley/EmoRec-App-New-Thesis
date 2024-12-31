@@ -1,6 +1,5 @@
 env/*
 preprocess/indobertweet-base-uncased-model/*
 model/*
-requirements.txt
 env
 __pycache__
