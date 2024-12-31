@@ -1,9 +1,58 @@
-# %% [markdown]
+#!/usr/bin/env python
+# coding: utf-8
+
 # # indolem/indobertweet-base-uncased
 
-# %%
+# In[1]:
+
+
 #https://huggingface.co/indobenchmark/indobert-base-lite-p2
-# %%
+get_ipython().system('pip install transformers')
+
+
+# In[2]:
+
+
+gpu_info = get_ipython().getoutput('nvidia-smi')
+gpu_info = '\n'.join(gpu_info)
+if gpu_info.find('failed') >= 0:
+  print('Not connected to a GPU')
+else:
+  print(gpu_info)
+
+
+# In[3]:
+
+
+get_ipython().run_line_magic('pip', 'install ntlk')
+
+
+# In[4]:
+
+
+get_ipython().run_line_magic('pip', 'install PySastrawi')
+
+
+# In[5]:
+
+
+import nltk
+
+nltk.download('punkt')
+nltk.download('punkt_tab')
+nltk.download('wordnet')
+nltk.download('omw-1.4')
+
+
+# In[6]:
+
+
+get_ipython().system('pip install datasets')
+
+
+# In[7]:
+
+
 from transformers import AutoTokenizer, AutoModelForSequenceClassification,AutoModel,BertTokenizer,AutoConfig
 from transformers import TrainingArguments
 from transformers import Trainer
@@ -16,7 +65,10 @@ from sklearn.metrics import accuracy_score
 import pandas as pd
 import numpy as np
 
-# %%
+
+# In[8]:
+
+
 #Loading the data train .txt file
 # df = pd.read_csv("/content/gdrive/MyDrive/ColabNotebooks/Chatbot/Experimen 3/Data/Dataset/Train/Dataset Tokopedia Review - Train (Semicolon Delimited).txt" , sep=';',encoding= 'unicode_escape')
 # df = pd.read_csv("sample_data/PRDECT-ID.csv" , encoding='ISO-8859-1')
@@ -24,13 +76,19 @@ df = pd.read_csv('/kaggle/input/product-review/PRDECT-ID.csv')
 # df.set_index(["labelEmotions","category","reviewText"]).count(level="labelEmotions")
 df.set_index(["Emotion","Category","Customer Review"]).value_counts('Emotion')
 
-# %%
+
+# In[9]:
+
+
 # kamus_alay = pd.read_csv("sample_data/kamusalay.csv" , encoding='ISO-8859-1',header = None)
 kamus_alay = pd.read_csv('/kaggle/input/product-review/kamusalay.csv', encoding='ISO-8859-1', header = None)
 kamus_alay_dict = kamus_alay.set_index(0).to_dict('dict')[1]
 kamus_alay_dict
 
-# %%
+
+# In[10]:
+
+
 #rename column
 # df=df[['reviewText','labelEmotions']]
 # df=df.rename(columns={"reviewText": "text", "labelEmotions": "label"})
@@ -39,7 +97,10 @@ df=df[['Customer Review','Emotion']]
 df=df.rename(columns={"Customer Review": "text", "Emotion": "label"})
 df.head()
 
-# %%
+
+# In[11]:
+
+
 import string
 import regex as re
 import nltk
@@ -49,7 +110,10 @@ from nltk.stem import PorterStemmer
 from Sastrawi.StopWordRemover.StopWordRemoverFactory import StopWordRemoverFactory
 from Sastrawi.Stemmer.StemmerFactory import StemmerFactory
 
-# %%
+
+# In[12]:
+
+
 def process_cleaning(text):
 
     # remove emoji spesifik, angka, url dulu
@@ -59,7 +123,7 @@ def process_cleaning(text):
     # Remove strip / trims
     text_strip = text_sub.strip()
 
-    # remove punctutation/simbolll
+    # remove punctutation / tanda baca
     translator = str.maketrans('', '', string.punctuation)
     text_no_punct = text_strip.translate(translator)
 
@@ -90,7 +154,10 @@ def process_cleaning(text):
 
     return tokens
 
-# %%
+
+# In[13]:
+
+
 import numpy as np
 import string
 
@@ -104,11 +171,17 @@ x_cleaned = df['text']
 # x_cleaned = data["cleaned"].values
 df.head(10)
 
-# %%
+
+# In[14]:
+
+
 from sklearn.preprocessing import LabelEncoder
 from collections import Counter
 
-# %%
+
+# In[15]:
+
+
 #encode label
 # def label2id (row):
 #   if row['label'] == "Sadness":
@@ -130,15 +203,24 @@ print(Counter(df['label']))
 y_replaced = df['label']
 print(y_replaced)
 
-# %%
+
+# In[16]:
+
+
 df.head(5)
 
-# %%
+
+# In[17]:
+
+
 from sklearn.model_selection import train_test_split
 
 # x_train, x_test, y_train, y_test = train_test_split(x_cleaned, y_replaced, test_size=0.2, random_state=225)
 
-# %%
+
+# In[18]:
+
+
 train_valid_ratio = 0.80
 train_test_ratio = 0.20
 
@@ -153,14 +235,20 @@ print(df_train)
 # print("Train Shape",df_train.shape)
 # print("Valid Shape",df_valid.shape)
 
-# %%
+
+# In[19]:
+
+
 # df['labelEncoded'] = df.apply(lambda row: label2id(row), axis=1)
 # df=df.rename(columns={"label": "emotions", "labelEncoded": "label"})
 # print(df.head())
 # label_reference=df[['emotions','label']].copy().drop_duplicates()
 # print(label_reference)
 
-# %%
+
+# In[20]:
+
+
 # df=df.rename(columns={"label": "emotions", "labelEncoded": "label"})
 print(df.head())
 # label_reference=df[['emotions','label']].copy().drop_duplicates()
@@ -172,7 +260,10 @@ print(df.head())
 print(df['label'])
 pd.concat
 
-# %%
+
+# In[21]:
+
+
 #prepare data train and validation
 import pandas as pd
 df_val = pd.DataFrame()
@@ -204,20 +295,28 @@ print(df_train.shape)
 #   # df_val=df_val.append(df.loc[df['label']==sentence.item()].head(5))
 # df_train = df[~df.text.isin(df_val.text)].copy()
 
-# %%
+
+# In[22]:
+
+
 print(df_train)
 
-# %%
+
+# In[23]:
+
+
 #convert dataframe to dataset type
 dataset_train = Dataset.from_dict(df_val)
 dataset_val =  Dataset.from_dict(df_test)
 print("Dataset Train : ",dataset_train)
 print("Dataset Val : ",dataset_val)
 
-# %% [markdown]
+
 # #Load Pre-trained Model and Fine Tune
 
-# %%
+# In[24]:
+
+
 #konfigurasi penamaan label sesuai dengan kelas emoion yang digunakan
 id2label = {
     "0": "Anger",
@@ -234,7 +333,10 @@ label2id= {
     "Sadness": 4
   }
 
-# %%
+
+# In[25]:
+
+
 # https://huggingface.co/indobenchmark/indobert-lite-base-p2
 # https://huggingface.co/ayameRushia/indobert-base-uncased-finetuned-indonlu-smsa
 config = AutoConfig.from_pretrained("indolem/indobertweet-base-uncased")
@@ -243,20 +345,32 @@ config.label2id = label2id
 config.id2label = id2label
 config._num_labels = len(label2id)
 
-# %%
+
+# In[26]:
+
+
 tokenizer = AutoTokenizer.from_pretrained("indolem/indobertweet-base-uncased")
 model = AutoModelForSequenceClassification.from_pretrained("indolem/indobertweet-base-uncased",config=config)
 model.config
 
-# %%
+
+# In[27]:
+
+
 def tokenize_function(examples):
     return tokenizer(examples["text"], padding="max_length", truncation=True, max_length=512)
 
-# %%
+
+# In[28]:
+
+
 dataset_train = dataset_train.map(tokenize_function, batched=True)
 dataset_val = dataset_val.map(tokenize_function, batched=True)
 
-# %%
+
+# In[29]:
+
+
 def compute_metrics(eval_pred):
     logits, labels = eval_pred
     preds = np.argmax(logits, axis=-1)
@@ -269,37 +383,61 @@ def compute_metrics(eval_pred):
         'recall': recall
     }
 
-# %%
+
+# In[30]:
+
+
 training_args = TrainingArguments("test_trainer", eval_strategy="epoch",per_device_train_batch_size=8,num_train_epochs=8,learning_rate=2e-5,logging_steps=1, report_to="none")
 trainer = Trainer(model=model.cuda(), args=training_args, train_dataset=dataset_train, eval_dataset=dataset_val,compute_metrics=compute_metrics)
 trainer.train()
 
-# %%
-model.save_pretrained("/model/deep_learning/save_pretrained/indobert-base-uncased-model")
-tokenizer.save_pretrained("/model/deep_learning/save_pretrained/indobert-base-uncased-model")
 
-# %%
-tokenizer = AutoTokenizer.from_pretrained("/model/deep_learning/save_pretrained/indobert-base-uncased-model")
-model = AutoModelForSequenceClassification.from_pretrained("/model/deep_learning/save_pretrained/indobert-base-uncased-model")
+# In[31]:
+
+
+model.save_pretrained("indobert-base-uncased-model")
+tokenizer.save_pretrained("indobert-base-uncased-model")
+
+
+# In[32]:
+
+
+tokenizer = AutoTokenizer.from_pretrained("/kaggle/working/indobert-base-uncased-model")
+model = AutoModelForSequenceClassification.from_pretrained("/kaggle/working/indobert-base-uncased-model")
 model.eval()
 
-# %%
-trainer.save_model('/model/deep_learning/save_model/indobert-base-uncased-model')
 
-# %%
+# In[33]:
+
+
+trainer.save_model('/kaggle/working/indobert-base-save_model')
+
+
+# In[34]:
+
+
 trainer.evaluate()
 
-# %%
+
+# In[35]:
+
+
 #convert dataframe to dataset type
 dataset_test= Dataset.from_dict(df_test)
 dataset_test = dataset_test.map(tokenize_function, batched=True)
 
-# %%
+
+# In[36]:
+
+
 predicted_review = trainer.predict(dataset_test)
 raw_pred, _, _ = predicted_review
 predclas= np.argmax(raw_pred, axis=1)
 
-# %%
+
+# In[37]:
+
+
 from sklearn.metrics import precision_recall_fscore_support
 from sklearn.metrics import accuracy_score
 from sklearn.model_selection import train_test_split
@@ -308,7 +446,10 @@ from sklearn.metrics import accuracy_score, classification_report, confusion_mat
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-# %%
+
+# In[38]:
+
+
 labels = df_test["label"].unique()
 accuracy = accuracy_score(df_test['label'], predclas)
 print('Accuracy: ', accuracy * 100)
@@ -330,3 +471,4 @@ ax.set_title('Confusion Matrix')
 
 ax.set_xlabel('Predicted Labels')
 ax.set_ylabel('True Labels')
+

@@ -24,7 +24,6 @@ from transformers import AutoTokenizer, AutoModelForSequenceClassification
 path_save_model = r"model\deep_learning\save_model"
 path_save_pretrained = r"model\deep_learning\save_pretrained"
 tokenizer = AutoTokenizer.from_pretrained(path_save_pretrained, local_files_only=True)# load tokenizer
-# D:\Projects\Product-Review-Data-Mining-App-Thesis\preprocess\indobertweet-base-uncased-model
 model = AutoModelForSequenceClassification.from_pretrained(path_save_pretrained, local_files_only=True)
 @app.route('/api/result', methods=['POST'])
 def result():    

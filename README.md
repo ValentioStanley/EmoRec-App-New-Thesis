@@ -1,4 +1,4 @@
-Welcome to my source code!
+Hello, welcome to my source code!
 
 I created a source code for my thesis.
 
@@ -12,4 +12,11 @@ First: Installing Python Environment
 5. Waiting until the Installation is done, select disable path length limit (optional).
 6. Open the command prompt and type "python --version", if the command displays python version then congratulations! Otherwise, please check at environment variables.
 
-Second: Soon....
+Second: Installing Library
+1. Create a new workspace folder. After that, click the path of workspace folder, write "cmd", and then it will displays command prompt automatically.
+2. Write "python -m venv env" to create a new package.
+3. Write "env\Scripts\activate" (for windows) to activate the package where you created. 
+4. Write "pip install flask torch transformers", if you got error that program don't find torch transformer in the environment or something like that, then you need to open visual studio code or python development tools and install it on the cell.
+5. For install libraries to meet preprocess requirement, please visit at Install-Lib.ipynb from Library_manual folder.
+
+Third: Soon....
