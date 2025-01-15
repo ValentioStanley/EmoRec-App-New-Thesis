@@ -21,7 +21,6 @@ nltk.download('punkt')
 
 # Import Library
 import pandas as pd
-import matplotlib.pyplot as plt
 
 
 # In[4]:
@@ -138,10 +137,7 @@ from sklearn.preprocessing import LabelEncoder
 print(Counter(data["Emotion"]))
 label_encoder = LabelEncoder()
 data["emotion"] = label_encoder.fit_transform(data["Emotion"])
-# print(data["emotion"].value_counts())
-# print(Counter(data["emotion"]))
 y_replaced = data["emotion"]
-# print(y_replaced)
 
 
 # In[13]:
@@ -167,7 +163,6 @@ from sklearn.metrics import confusion_matrix, classification_report, accuracy_sc
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.feature_extraction.text import HashingVectorizer
-import seaborn as sns
 
 
 # In[16]:
@@ -193,47 +188,14 @@ print('Length of X Testing Data : ', len(x_test))
 print('Length of Y Testing Data : ', len(y_test))
 
 model_lr_tf = Pipeline([('vectorizer',tf_vect),('classifier',lr)])
-y_emot = y_train.replace({0: 'Anger', 1: 'Fear', 2: 'Happy', 3:'Love', 4: 'Sadness'})
-lr = model_lr_tf.fit(x_train, y_emot)
-
-# def findEvaluation(test, pred):
-#     # Define the evaluation function
-#     cm = confusion_matrix(test, pred)
-#     print(cm)
-
-#     print("Accuracy:", accuracy_score(test, pred) * 100)
-#     print("Precision:", precision_score(test, pred, average='macro') * 100)
-#     print("Recall:", recall_score(test, pred, average='macro') * 100)
-#     print("F1-Score:", f1_score(test, pred, average='macro') * 100)
-#     print(classification_report(test, pred))
-
-#     sns.heatmap(cm, annot=True, fmt="d", cmap='coolwarm')
-#     plt.title('Confusion Matrix', fontsize=17, pad=20)
-#     plt.gca().xaxis.set_label_position('top')
-#     plt.ylabel('Actual', fontsize=13)
-#     plt.xlabel('Predicted', fontsize=13)
-#     plt.gca().xaxis.tick_top()
-
-#     plt.gca().figure.subplots_adjust(bottom=0.2)
-#     plt.show()
-    
-
-# y_pred = model_lr_tf.predict(x_test)
-# print("Klasifikasi TFIDF Logistic Regression\n")
-# findEvaluation(y_test, y_pred)
+# y_emot = y_train.replace({0: 'Anger', 1: 'Fear', 2: 'Happy', 3:'Love', 4: 'Sadness'})
+lr = model_lr_tf.fit(x_train, y_train)
 
 
 
 # In[17]:
 
 import pickle
-# tf_vect = TfidfVectorizer()
-# x_train_tf = tf_vect.fit_transform(x_train)
-# x_test_tf = tf_vect.transform(x_test)
-# y_emot = y_train.replace({0: 'Anger', 1: 'Fear', 2: 'Happy', 3:'Love', 4: 'Sadness'})
-# lr = lr.fit(x_train, y_emot)
-
-pickle.dump(lr, open('model/lr.pkl', 'wb'))
-pickle.dump(tf_vect, open('model/tf_vect.pkl', 'wb'))
+pickle.dump(lr, open('model/machine_learning/lr.pkl', 'wb'))
 
 
