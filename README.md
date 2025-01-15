@@ -41,7 +41,7 @@ If you want to save local storage capacity, please visit at jupyter notebook (ht
 After visitting them, please follow this third step until save the model into your notebook directory. 
 Please follow the model saved on the notebook directory, then download the model into your workspace folder.
 For example:
-![Save Model](guide-image/image.png)
+![Save Model](./guide-image/image.png)
 
 Fourth: Launching application
 1. Select IndoBert (top) or Logistic Regression (bottom) snippet code, then un-comment the snippet code selected.
