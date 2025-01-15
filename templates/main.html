@@ -59,17 +59,16 @@
           font-size: 25px;
         }
       }
-      
     </style>
 </head>
 <body>
    <div style="background-color: #4ECDC4;">
       <h1 id="kepala" class="font-bold underline text-center text-white" >Emotion Recognition based on Text of Product Review</h1>
-      
    </div>
-      <form class="d-flex justify-content-center " action="{{url_for('result')}}" method="POST">
-        <div class="form-row mt-5 flex-column">
-          <div class="col-auto form-group">
+   <div style="display: flex; flex-direction: column; min-height: 91vh;">
+      <form style=" flex:1; overflow-y:auto; " class="d-flex justify-content-center" action="{{url_for('result')}}" method="POST">
+        <div id= "konten"class="form-row mt-5 flex-column">
+          <div class="col-auto form-group ">
             <label for="inlineFormInput">Text Review:</label>
             <textarea id="responsive" style="
              border-color: #023436;"class="form-control" id="review" name="review" rows="4" placeholder="bagus banget barangnyaaa!!" required>{{input}}</textarea>
@@ -93,12 +92,13 @@
           </p>
         </div>
       </form>
-      <footer style="background-color: #049A8F; position: fixed; bottom: 0; width: 100%;">
+      <footer style="background-color: #049A8F; bottom: 0;">
         <p class="text-center" style="opacity: 0.9; color:white;">Created by Valentio Stanley Gunadi<br>
         I developed this application for my thesis, please click here <a href="https://forms.gle/YyJ2ZB8zbd9pg3P49"><u>google form</u></a> to score the functions.<br>
         If you need a hand, please do not hesitate to hit me up!<br>
         Thank you!</p>
         <div class="text-right" ><a id="ref" class="text-white" href="https://emojiisland.com/pages/download-new-emoji-icons-in-png-ios-10" ><u>Emotion Source</u></a> </div>
-      </footer>
+      </footer> 
+    </div>
 </body>
 </html>
