@@ -3,9 +3,6 @@
 
 # In[1]:
 
-
-# get_ipython().run_line_magic('pip', 'install emoji')
-# get_ipython().run_line_magic('pip', 'install PySastrawi')
 import nltk
 nltk.download('punkt')
 
@@ -17,90 +14,69 @@ nltk.download('punkt')
 
 
 # In[3]:
-
-
 # Import Library
 import pandas as pd
 
-
 # In[4]:
-
-
 data = pd.read_csv('dataset/PRDECT-ID.csv')
 
 
 # In[5]:
-
-
-kamus_alay = pd.read_csv('dataset/kamusalay.csv', encoding='ISO-8859-1', header = None)
-kamus_alay_dict = kamus_alay.set_index(0).to_dict('dict')[1]
+kamus_tb = pd.read_csv('dataset/kamusalay.csv', encoding='ISO-8859-1', header = None)
+kamus_tb_dict = kamus_tb.set_index(0).to_dict('dict')[1]
 
 
 # In[6]:
-
-
 from collections import Counter
 data = pd.DataFrame(data)
 data = data[['Customer Review', 'Emotion']]
 
 
 # In[7]:
-
-
 import string
 import regex as re
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 from nltk.stem import PorterStemmer
-
-
-# In[8]:
-
-
 from Sastrawi.StopWordRemover.StopWordRemoverFactory import StopWordRemoverFactory
 from Sastrawi.Stemmer.StemmerFactory import StemmerFactory
 
-# for lol in StopWordRemoverFactory().get_stop_words():
-#   print(lol)
-
 
 # In[9]:
-
-
-# pake kamus alay
+# use kamus alay
 
 def process_cleaning(text):
 
-    # remove emoji spesifik, angka, url dulu
+    # Replace emoji, numerik, url, non-word character by spacing
     text_cleaning_re = r"rt|url|[^\w\s]|'|nbsp|https\S+|[0-9]+"
     text_sub = re.sub(text_cleaning_re, ' ', str(text))
 
     # Remove strip / trims
     text_strip = text_sub.strip()
 
-    # remove punctutation/simbolll
+    # Remove punctutation / tanda baca
     translator = str.maketrans('', '', string.punctuation)
     text_no_punct = text_strip.translate(translator)
 
     # Lower Case
     text_lower = text_no_punct.casefold()
 
-    # tokenize
+    # Tokenize
     text_token_stan = word_tokenize(text_lower)
 
+    # Penggantian kata tidak baku / Normalization
     word_dict = []
     for word in text_token_stan:
-        word_dict.append(kamus_alay_dict.get(word, word))
+        word_dict.append(kamus_tb_dict.get(word, word))
     tokens = " ".join(word_dict)
 
-    # tambah kata singkatan =
+    # Tambah kata singkatan 
     more_stopword = ["sih","nya"]
 
     # menampung stopword ke variabel untuk jadi operator remove stopword
     stopword_user = StopWordRemoverFactory().get_stop_words() + more_stopword
-    # stopword_user = StopWordRemoverFactory().get_stop_words()
 
-    # alternatif untuk perbaiki akurasi
+    # Remove stopword
     token_new = word_tokenize(tokens)
     filter_new = []
     filter_new2 = [word.strip() for word in token_new]
@@ -110,67 +86,40 @@ def process_cleaning(text):
     return tokens
 
 
+
 # In[10]:
-
-
 import numpy as np
 import string
 
 data["cleaned"] = data["Customer Review"].apply(process_cleaning)
-# print(np.array(data["processed_cleaning"]))
-# print(list(data["processed_cleaning"]))
-
 x_cleaned = data["cleaned"]
-# x_cleaned = data["cleaned"].values
 data.head(10)
 
 
 # In[11]:
-
-
 from sklearn.preprocessing import LabelEncoder
-
-
-# In[12]:
-
-
 print(Counter(data["Emotion"]))
 label_encoder = LabelEncoder()
 data["emotion"] = label_encoder.fit_transform(data["Emotion"])
 y_replaced = data["emotion"]
 
 
-# In[13]:
-
+# In[12]:
 
 from sklearn.linear_model import LogisticRegression
-
-
-# In[14]:
-
-
 # Create a model
 lr = LogisticRegression()
 
-
-# In[15]:
-
-
+# In[13]:
 from sklearn.model_selection import train_test_split
 from sklearn.pipeline import Pipeline
-from sklearn.pipeline import make_pipeline
-from sklearn.metrics import confusion_matrix, classification_report, accuracy_score, precision_score, recall_score, f1_score
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.feature_extraction.text import HashingVectorizer
 
 
 # In[16]:
-
-
-co_vect = CountVectorizer()
 tf_vect = TfidfVectorizer()
-hash_vect = HashingVectorizer()
 
 x = x_cleaned
 y = y_replaced # emotion field
@@ -190,9 +139,6 @@ print('Length of Y Testing Data : ', len(y_test))
 model_lr_tf = Pipeline([('vectorizer',tf_vect),('classifier',lr)])
 # y_emot = y_train.replace({0: 'Anger', 1: 'Fear', 2: 'Happy', 3:'Love', 4: 'Sadness'})
 lr = model_lr_tf.fit(x_train, y_train)
-
-
-
 # In[17]:
 
 import pickle
