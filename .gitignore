@@ -1,5 +1,5 @@
 env/*
-preprocess/indobertweet-base-uncased-model/*
 model/*
 env
 __pycache__
+preprocess/testing.ipynb
